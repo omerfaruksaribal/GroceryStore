@@ -2,6 +2,7 @@ import SwiftUI
 
 struct RegisterView: View {
     @State private var vm = RegisterVM()
+    @State private var moveToActivate = false
 
     var body: some View {
         VStack(spacing: 24) {
@@ -31,5 +32,12 @@ struct RegisterView: View {
         }
         .padding()
         .navigationTitle("Register")
+        .navigationDestination(isPresented: $moveToActivate) {
+            ActivateAccountView(email: vm.email)
+        }
+        .onChange(of: vm.successMessage) { _, newVal in
+            if newVal != nil { moveToActivate = true }
+
+        }
     }
 }

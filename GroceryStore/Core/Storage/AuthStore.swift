@@ -12,8 +12,7 @@ final class AuthStore {
         self.refreshToken = KeychainStore.readRefreshToken()
     }
 
-    //  MARK: - published state
-    @Published private(set) var accessToken: String?
+    var accessToken: String?
     private(set) var refreshToken: String?
 
     // Access token’ın UserDefaults anahtarı

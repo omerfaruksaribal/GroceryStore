@@ -1,22 +1,23 @@
 import Foundation
 
-enum AuthEndpoint {
+enum AuthEndpoint: Endpoint {
     case login(LoginRequest)
     case register(RegisterRequest)
-    case refresh(String)
+    case refresh(String)                 // refreshToken
     case activate(ActivateAccountRequest)
     case forgotPassword(ForgotPasswordRequest)
     case resetPassword(ResetPasswordRequest)
 
-    //  MARK: - Endpoint
+    // MARK: - Endpoint protocol
+
     var path: String {
         switch self {
-        case .login:           "/auth/login"
-        case .register:        "/auth/register"
-        case .refresh:         "/auth/refresh-token"
-        case .activate:        "/auth/activate"
-        case .forgotPassword:  "/auth/forgot-password"
-        case .resetPassword:   "/auth/reset-password"
+        case .login:          "/auth/login"
+        case .register:       "/auth/register"
+        case .refresh:        "/auth/refresh-token"
+        case .activate:       "/auth/activate"
+        case .forgotPassword: "/auth/forgot-password"
+        case .resetPassword:  "/auth/reset-password"
         }
     }
 
@@ -27,18 +28,22 @@ enum AuthEndpoint {
         }
     }
 
+    /// Bu property **şart**; boşsa `[]` döndür
+    var query: [URLQueryItem] { [] }
+
+    /// Header dizisi de **şart**; JSON gönderiyoruz
+    var headers: [String : String] { ["Content-Type": "application/json"] }
+
+    /// Gövde – ilgili DTO’yu JSON’a çeviriyoruz
     var body: Data? {
+        let encoder = JSONEncoder()
         switch self {
-        case .login(let req): try? JSONEncoder().encode(req)
-        case .register(let req): try? JSONEncoder().encode(req)
-        case .refresh(let token): try? JSONEncoder().encode(RefreshTokenRequest(refreshToken: token))
-        case .activate(let req): try? JSONEncoder().encode(req)
-        case .forgotPassword(let req): try? JSONEncoder().encode(req)
-        case .resetPassword(let req): try? JSONEncoder().encode(req)
+        case .login(let req):              return try? encoder.encode(req)
+        case .register(let req):           return try? encoder.encode(req)
+        case .refresh(let token):          return try? encoder.encode(RefreshTokenRequest(refreshToken: token))
+        case .activate(let req):           return try? encoder.encode(req)
+        case .forgotPassword(let req):     return try? encoder.encode(req)
+        case .resetPassword(let req):      return try? encoder.encode(req)
         }
     }
-
-    var headers: [String: String] { ["Content-Type": "application/json"] }
-
-    var query: [URLQueryItem] { [] }
 }

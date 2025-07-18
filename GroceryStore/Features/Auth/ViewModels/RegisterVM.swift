@@ -21,6 +21,8 @@ final class RegisterVM {
             let dto = RegisterRequest(username: username, email: email, password: password)
             successMessage = try await service.register(dto: dto)
             error = nil
+        } catch let APIError.server(message, _) {
+            error = message
         } catch {
             self.error = error.localizedDescription
         }

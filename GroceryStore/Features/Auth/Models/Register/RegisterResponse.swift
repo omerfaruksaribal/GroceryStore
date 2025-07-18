@@ -1,5 +1,5 @@
 struct RegisterResponse: Codable {
-    let userID: String
+    let userId: String      
     let email: String
-    let password: String
+    let message: String      // "Registration successful. Please activate…"
 }

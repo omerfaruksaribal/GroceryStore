@@ -7,6 +7,7 @@ enum APIError: Error {
     case invalidResponse
     case status(Int)
     case decoding(Error)
+    case server(message: String, code: Int)   
 }
 
 protocol Endpoint {

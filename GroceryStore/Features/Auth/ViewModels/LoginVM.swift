@@ -18,6 +18,8 @@ final class LoginVM {
         do {
             try await service.login(username: username, password: password)
             error = nil
+        } catch let APIError.server(message, _) {
+            error = message            
         } catch {
             self.error = error.localizedDescription
         }

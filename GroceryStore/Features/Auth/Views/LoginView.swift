@@ -2,6 +2,8 @@ import SwiftUI
 
 struct LoginView: View {
     @State private var vm = LoginVM()
+    @Environment(\.dismiss) private var dismiss
+    @State private var moveToMain = false
 
     var body: some View {
         VStack(spacing: 24) {
@@ -26,5 +28,13 @@ struct LoginView: View {
         }
         .padding()
         .navigationTitle(Text("Login"))
+        .onChange(of: AuthStore.shared.accessToken) { _, newValue in
+            if newValue != nil {
+                moveToMain = true
+            }
+        }
+        .navigationDestination(isPresented: $moveToMain) {
+            Text("Main Screen")
+        }
     }
 }
