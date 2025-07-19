@@ -14,6 +14,9 @@ final class APIClient {
     /// Generic request  - 'T' response from server
     func send<T: Decodable>(_ endpoint: Endpoint) async throws -> T {
         var request = URLRequest(url: endpoint.url)
+
+        print("➡️", request.httpMethod ?? "", request.url!.absoluteString)
+
         request.httpMethod = endpoint.method.rawValue
         request.httpBody = endpoint.body
         endpoint.headers.forEach { request.setValue($1, forHTTPHeaderField: $0) }
@@ -27,6 +30,7 @@ final class APIClient {
 
         do {
             let (data, response) = try await URLSession.shared.data(for: request)
+
             guard let http = response as? HTTPURLResponse else { throw APIError.invalidResponse }
 
             Log.network.info("⬅️ \(http.statusCode) bytes:\(data.count, privacy: .public)")

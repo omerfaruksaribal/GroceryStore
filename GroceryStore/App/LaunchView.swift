@@ -10,8 +10,7 @@ struct LaunchView: View {
             case .auth:
                 NavigationStack { LoginView() }
             case .main:
-                // Placeholder
-                Text("Main Screen")
+                ProductGridView()
             }
 
             if isRefreshing {
@@ -19,13 +18,14 @@ struct LaunchView: View {
             }
         }
         .task {
-            print("BASE_URL ->", Bundle.main.object(forInfoDictionaryKey: "BASE_URL") as Any)
             if await AuthService().refreshIfNeeded() {
                 route = .main
             } else {
                 route = .auth
             }
             isRefreshing = false
+            //print("🔑 accessToken ->", AuthStore.shared.accessToken ?? "nil")
+
         }
         .animation(.easeInOut, value: route)
     }
