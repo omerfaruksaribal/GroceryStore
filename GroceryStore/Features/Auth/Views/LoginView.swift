@@ -23,18 +23,18 @@ struct LoginView: View {
             .disabled(vm.isLoading)
             .buttonStyle(.borderedProminent)
 
-            NavigationLink("Don’t have an account? Register", destination: RegisterView())
+            NavigationLink("Don’t have an account? Register",
+                           destination: RegisterView())
                 .font(.footnote)
         }
         .padding()
-        .navigationTitle(Text("Login"))
+        .navigationTitle("Login")
         .onChange(of: AuthStore.shared.accessToken) { _, newValue in
-            if newValue != nil {
-                moveToMain = true
-            }
+            moveToMain = newValue != nil        // token geldi → sekmeye geç
         }
         .navigationDestination(isPresented: $moveToMain) {
-            Text("Main Screen")
+            MainTabView()
+                .navigationBarBackButtonHidden(true)  // geri ok gizle
         }
     }
 }

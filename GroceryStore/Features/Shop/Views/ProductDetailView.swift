@@ -72,12 +72,30 @@ private struct ProductContent: View {
 
     private var productInfo: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text(product.name).font(.title).bold()
+            Text(product.name)
+                .font(.title)
+                .bold()
+
             Text(String(format: "$ %.2f", product.price))
-                .font(.title2).foregroundStyle(.green)
+                .font(.title2)
+                .foregroundStyle(.green)
+
             Text("Brand: \(product.brand)")
-                .font(.subheadline).foregroundStyle(.secondary)
-            Text(product.description).font(.body)
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+
+            Text(product.description)
+                .font(.body)
+
+            Button {
+                Task {
+                    await CartStore.shared.add(product: product)
+                }
+            } label: {
+                Label("Add to Cart", systemImage: "cart.badge.plus")
+                    .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.borderedProminent)
         }
         .padding()
     }
@@ -85,7 +103,8 @@ private struct ProductContent: View {
     private var reviewSection: some View {
         VStack(alignment: .leading, spacing: 8) {
             Divider()
-            Text("Reviews").font(.headline)
+            Text("Reviews")
+                .font(.headline)
             ForEach(product.reviews) { review in
                 ReviewRow(review: review)
             }

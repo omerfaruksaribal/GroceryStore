@@ -10,7 +10,7 @@ struct LaunchView: View {
             case .auth:
                 NavigationStack { LoginView() }
             case .main:
-                ProductGridView()
+                MainTabView()  
             }
 
             if isRefreshing {
@@ -19,6 +19,7 @@ struct LaunchView: View {
         }
         .task {
             if await AuthService().refreshIfNeeded() {
+                await CartStore.shared.syncFromBackend() // Cart
                 route = .main
             } else {
                 route = .auth

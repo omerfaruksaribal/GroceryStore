@@ -31,7 +31,15 @@ final class APIClient {
         do {
             let (data, response) = try await URLSession.shared.data(for: request)
 
-            guard let http = response as? HTTPURLResponse else { throw APIError.invalidResponse }
+            guard let http = response as? HTTPURLResponse else {
+                throw APIError.invalidResponse
+            }
+
+            // ---------- LOG ----------
+            print("⬅️ status", http.statusCode, "bytes", data.count)
+            if http.statusCode >= 400 {
+                print(String(data: data, encoding: .utf8) ?? "no-body")
+            }
 
             Log.network.info("⬅️ \(http.statusCode) bytes:\(data.count, privacy: .public)")
 
