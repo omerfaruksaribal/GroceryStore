@@ -23,14 +23,17 @@ struct LoginView: View {
             .disabled(vm.isLoading)
             .buttonStyle(.borderedProminent)
 
-            NavigationLink("Don’t have an account? Register",
-                           destination: RegisterView())
+            NavigationLink("Don’t have an account? Register", destination: RegisterView())
                 .font(.footnote)
+                .disabled(vm.isLoading)
         }
         .padding()
         .navigationTitle("Login")
-        .onChange(of: AuthStore.shared.accessToken) { _, newValue in
-            moveToMain = newValue != nil        // token geldi → sekmeye geç
+        .onChange(of: AuthStore.shared.accessToken) { _, newToken in
+            moveToMain = newToken != nil
+            if newToken != nil {
+                Task { await CartStore.shared.syncFromBackend() }
+            }
         }
         .navigationDestination(isPresented: $moveToMain) {
             MainTabView()

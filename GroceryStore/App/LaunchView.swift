@@ -28,6 +28,18 @@ struct LaunchView: View {
             //print("🔑 accessToken ->", AuthStore.shared.accessToken ?? "nil")
 
         }
+        .onChange(of: AuthStore.shared.accessToken) { _, newToken in
+            if newToken != nil {
+                route = .main
+                // View geçişini bir sonraki run-loop’a ertele
+                DispatchQueue.main.async {
+                    Task { await CartStore.shared.syncFromBackend() }
+                }
+            } else {
+                route = .auth
+            }
+        }
+
         .animation(.easeInOut, value: route)
     }
 }

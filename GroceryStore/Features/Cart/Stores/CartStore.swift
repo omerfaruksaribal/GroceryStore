@@ -61,6 +61,21 @@ final class CartStore: ObservableObject {
         }
     }
 
+    @MainActor
+    func checkOut(address: String) async -> OrderResponse? {
+        guard !items.isEmpty else { return nil }
+        do {
+            let order = try await OrderService().place(address: address)
+            // clear the cart
+            items = []
+            total = 0
+            return order
+        } catch {
+            Log.network.error("Checkout Failed \(error)")
+            return nil
+        }
+    }
+
     // helper
     private func apply(_ page: CartPage) {
         items = page.cartItems

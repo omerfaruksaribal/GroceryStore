@@ -34,15 +34,23 @@ struct CartView: View {
                 .padding()
                 .background(.ultraThinMaterial)
             }
+
             .navigationTitle("Cart")
             .toolbar {
+                // Top-Right “Clear”
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Clear") {
-                        Task {
-                            await store.clear()
-                        }
+                        Task { await store.clear() }
                     }
                     .disabled(store.items.isEmpty)
+                }
+
+                // Bottom bar “Checkout”
+                ToolbarItem(placement: .bottomBar) {
+                    NavigationLink("Checkout") { CheckoutView() }
+                        .buttonStyle(.borderedProminent)
+                        .disabled(store.items.isEmpty)
+                        .frame(maxWidth: .infinity)
                 }
             }
             .task { await store.syncFromBackend() }

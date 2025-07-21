@@ -29,6 +29,7 @@ struct RegisterView: View {
 
             NavigationLink("Already have an account? Login", destination: LoginView())
                 .font(.footnote)
+                .disabled(vm.isLoading)
         }
         .padding()
         .navigationTitle("Register")
