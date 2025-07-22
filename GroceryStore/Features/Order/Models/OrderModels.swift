@@ -8,13 +8,24 @@ struct OrderItem: Codable, Identifiable {
     let price: Double
 }
 
-struct OrderResponse: Codable, Identifiable {
+struct OrderResponse: Codable, Identifiable, Hashable {
     var id: String { orderId }
+
     let orderId: String
     let address: String
-    let date: String        // ISO-8601 YYYY-MM-DD
+    let date: String
     let totalAmount: Double
-    let items: [OrderItem]
+    let items: [OrderItem]           
+
+    // Hashable + Equatable (değişmedi)
+    static func == (lhs: Self, rhs: Self) -> Bool { lhs.orderId == rhs.orderId }
+    func hash(into hasher: inout Hasher) { hasher.combine(orderId) }
+
+    private enum CodingKeys: String, CodingKey {
+        case orderId, address, date
+        case totalAmount = "total"       // for profile
+        case items       = "orderItems"  // for profile
+    }
 }
 
 

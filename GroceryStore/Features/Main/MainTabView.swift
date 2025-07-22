@@ -17,6 +17,11 @@ struct MainTabView: View {
                     Label("Cart", systemImage: "cart.fill")
                         .badge(cartStore.items.count)
                 }
+
+            ProfileView()
+                .tabItem {
+                    Label("Profile", systemImage: "person")
+                }
         }
         // Light haptic – rota değiştiğinde sepeti senkronize etmeye gerek kalmaz;
         // LaunchView içinde zaten `syncFromBackend()` çağrısı yapıyoruz.

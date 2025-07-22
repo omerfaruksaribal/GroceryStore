@@ -1,6 +1,6 @@
 import Foundation
 
-enum OrderEndpoint: Endpoint {
+enum OrdersEndpoint: Endpoint {
     case place(address: String)
     case list
     case detail(id: String)
