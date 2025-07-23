@@ -11,7 +11,7 @@ struct OrderSuccessView: View {
 
             Text("Order ID: \(order.orderId)")
             Text("Deliver to: \(order.address)")
-            Text("Total: $ \(order.totalAmount, specifier: "%.2f")")
+            Text("Total: $ \(order.total, specifier: "%.2f")")
 
             Button("Done") { onClose() }
                 .buttonStyle(.borderedProminent)

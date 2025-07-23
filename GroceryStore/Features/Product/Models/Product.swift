@@ -10,7 +10,7 @@ struct Product: Codable, Identifiable, Hashable {
     let category: String
     let brand: String
     let weight: String
-    let reviews: [Review]
+    let reviews: [ReviewDTO]
     let averageRating: Double?
 
     static func == (lhs: Product, rhs: Product) -> Bool {

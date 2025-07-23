@@ -20,7 +20,7 @@ struct AuthService {
         }
 
         await AuthStore.shared.storeTokens(access: data.accessToken,
-                                           refresh: data.refreshToken)
+                                           refresh: data.refreshToken, username: data.username)
         Log.network.debug("✅ User \(data.username) logged in")
     }
 
@@ -46,7 +46,10 @@ struct AuthService {
             let wrapped: Wrapped = try await api.send(AuthEndpoint.refresh(shared))
 
             guard let data = wrapped.data else { return false }
-            await AuthStore.shared.storeTokens(access: data.accessToken, refresh: data.refreshToken)
+
+            let user = await AuthStore.shared.currentUsername ?? ""
+
+            await AuthStore.shared.storeTokens(access: data.accessToken, refresh: data.refreshToken, username: user)
 
             return true
         } catch {

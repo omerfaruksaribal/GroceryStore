@@ -22,7 +22,7 @@ struct OrdersView: View {
                                     .foregroundStyle(.secondary)
                             }
                             Spacer()
-                            Text("$ \(order.totalAmount, specifier: "%.2f")")
+                            Text("$ \(order.total, specifier: "%.2f")")
                         }
                     }
                 }

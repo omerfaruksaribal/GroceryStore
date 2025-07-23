@@ -43,7 +43,7 @@ struct OrderDetailView: View {
                 HStack {
                     Text("Total").bold()
                     Spacer()
-                    Text("$ \(order.totalAmount, specifier: "%.2f")").bold()
+                    Text("$ \(order.total, specifier: "%.2f")").bold()
                 }
             }
         }

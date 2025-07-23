@@ -15,7 +15,7 @@ struct ProfileView: View {
                 }
                 // --------------  NAVIGATION DESTINATION  -------------
                 .navigationDestination(for: OrderResponse.self) { order in
-                    OrderDetailView(order: order)  
+                    OrderDetailView(order: order)
                 }
         }
         .task { await vm.load() }
@@ -61,7 +61,7 @@ struct ProfileView: View {
                                 HStack {
                                     Text(order.orderId)
                                     Spacer()
-                                    Text("$ \(order.totalAmount, specifier: "%.2f")")
+                                    Text("$ \(order.total, specifier: "%.2f")")
                                 }
                             }
                         }

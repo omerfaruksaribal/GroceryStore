@@ -18,10 +18,13 @@ final class AuthStore {
     // Access token’ın UserDefaults anahtarı
     private static let accessTokenKey = "accessToken"
 
+    // current user name
+    private(set) var currentUsername: String?
+
     //  MARK: - mutating helpers
     /// login sonrası çağrılır
     @MainActor
-    func storeTokens(access: String, refresh: String) {
+    func storeTokens(access: String, refresh: String, username: String) {
         // RAM + UserDefaults
         accessToken = access
         UserDefaults.standard.set(access, forKey: Self.accessTokenKey)
@@ -29,6 +32,9 @@ final class AuthStore {
         // Keychain
         KeychainStore.saveRefreshToken(refresh)
         refreshToken = refresh
+
+        // For review, we must hold current username
+        currentUsername = username
     }
 
     /// Logout
