@@ -11,40 +11,48 @@ struct CheckoutView: View {
 
     var body: some View {
         NavigationStack {
-            Form {
-                Section("Delivery Address") {
-                    TextField("Type your address...", text: $address)
-                }
-
-                Section("Items") {
-                    ForEach(store.items) { item in
-                        HStack {
-                            Text("\(item.productName) x\(item.quantity)")
-                            Spacer()
-                            Text("$ \(item.lineTotal, specifier: "%.2f")")
+            ZStack {
+                Color(.systemGroupedBackground).ignoresSafeArea()
+                VStack(spacing: 24) {
+                    Form {
+                        Section("Delivery Address") {
+                            TextField("Type your address...", text: $address)
+                        }
+                        Section("Items") {
+                            ForEach(store.items) { item in
+                                HStack {
+                                    Text("\(item.productName) x\(item.quantity)")
+                                    Spacer()
+                                    Text("$ \(item.lineTotal, specifier: "%.2f")")
+                                }
+                            }
+                        }
+                        Section("Total") {
+                            Text("$ \(store.total, specifier: "%.2f")")
+                                .bold()
                         }
                     }
-                }
+                    .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+                    .padding(.horizontal, 4)
 
-                Section("Total") {
-                    Text("$ \(store.total, specifier: "%.2f")")
-                        .bold()
+                    Button {
+                        placeOrder()
+                    } label: {
+                        Label("Place Order", systemImage: "checkmark.circle")
+                            .frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .font(.title3)
+                    .padding(.horizontal)
+                    .disabled(isPlacing || address.trimmingCharacters(in: .whitespaces).isEmpty)
+                    .overlay {
+                        if isPlacing { ProgressView() }
+                    }
                 }
-            }
-
-            Button {
-                placeOrder()
-            } label: {
-                Text("Place Order")
-                    .frame(maxWidth: .infinity)
-            }
-            .buttonStyle(.borderedProminent)
-            .padding()
-            .disabled(isPlacing || address.trimmingCharacters(in: .whitespaces).isEmpty)
-            .overlay {
-                if isPlacing { ProgressView() }
+                .padding(.top, 12)
             }
             .navigationTitle("Checkout")
+            .navigationBarTitleDisplayMode(.large)
             .sheet(item: $result) { order in
                 OrderSuccessView(order: order) { dismiss() }
             }

@@ -2,15 +2,30 @@ import SwiftUI
 
 struct ProductDetailView: View {
     let productId: String
-    @State private var vm = ProductDetailVM()          // one shared instance
-    @State private var showAddReview = false           // controls Add-Review sheet
+    @State private var vm = ProductDetailVM()
+    @State private var showAddReview = false
 
     var body: some View {
         Group {
             if vm.isLoading {
-                LoadingView()
+                VStack {
+                    ProgressView("Loading…")
+                        .progressViewStyle(CircularProgressViewStyle(tint: .accentColor))
+                        .scaleEffect(1.3)
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .background(.ultraThinMaterial)
             } else if let error = vm.errorMessage {
-                ErrorView(message: error)
+                VStack(spacing: 16) {
+                    Image(systemName: "exclamationmark.triangle.fill")
+                        .font(.system(size: 40))
+                        .foregroundColor(.orange)
+                    Text(error)
+                        .foregroundStyle(.red)
+                        .multilineTextAlignment(.center)
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .background(.ultraThinMaterial)
             } else if let p = vm.product {
                 ProductContent(
                     product: p,
@@ -24,7 +39,7 @@ struct ProductDetailView: View {
             }
         }
         .navigationTitle("Details")
-        .navigationBarTitleDisplayMode(.inline)
+        .navigationBarTitleDisplayMode(.large)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button {
@@ -45,24 +60,7 @@ struct ProductDetailView: View {
             }
         }
         .task { await vm.load(id: productId) }
-    }
-}
-
-// MARK: – Helper views
-
-private struct LoadingView: View {
-    var body: some View {
-        ProgressView("Loading…")
-            .padding()
-    }
-}
-
-private struct ErrorView: View {
-    let message: String
-    var body: some View {
-        Text(message)
-            .foregroundStyle(.red)
-            .padding()
+        .background(Color(.systemGroupedBackground).ignoresSafeArea())
     }
 }
 
@@ -73,34 +71,42 @@ private struct ProductContent: View {
 
     var body: some View {
         ScrollView {
-            productImage
-            productInfo
-            if !reviews.isEmpty { reviewSection }
+            VStack(spacing: 24) {
+                productImage
+                productInfo
+                if !reviews.isEmpty { reviewSection }
+            }
+            .padding(.bottom, 24)
         }
     }
-
-    // MARK: – Sub-views
 
     private var productImage: some View {
         AsyncImage(url: product.imageUrl) { phase in
             switch phase {
             case .empty:
-                Color.gray.opacity(0.1)
-                    .overlay { ProgressView() }
+                ZStack {
+                    Color.gray.opacity(0.1)
+                    ProgressView()
+                }
             case .success(let img):
                 img.resizable().scaledToFill()
             case .failure:
                 Image(systemName: "photo")
                     .font(.largeTitle)
                     .foregroundColor(.secondary)
-                    .frame(maxWidth: .infinity,
-                           maxHeight: .infinity)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
             @unknown default:
                 EmptyView()
             }
         }
         .frame(height: 240)
-        .clipped()
+        .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+        .background(
+            RoundedRectangle(cornerRadius: 24, style: .continuous)
+                .fill(Color(.systemBackground))
+                .shadow(color: .black.opacity(0.07), radius: 4, x: 0, y: 2)
+        )
+        .padding(.horizontal)
     }
 
     private var productInfo: some View {
@@ -108,18 +114,14 @@ private struct ProductContent: View {
             Text(product.name)
                 .font(.title)
                 .bold()
-
             Text(String(format: "$ %.2f", product.price))
                 .font(.title2)
                 .foregroundStyle(.green)
-
             Text("Brand: \(product.brand)")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
-
             Text(product.description)
                 .font(.body)
-
             Button {
                 Task { await CartStore.shared.add(product: product) }
             } label: {
@@ -127,8 +129,15 @@ private struct ProductContent: View {
                     .frame(maxWidth: .infinity)
             }
             .buttonStyle(.borderedProminent)
+            .padding(.top, 8)
         }
         .padding()
+        .background(
+            RoundedRectangle(cornerRadius: 20, style: .continuous)
+                .fill(Color(.secondarySystemGroupedBackground))
+                .shadow(color: .black.opacity(0.04), radius: 4, x: 0, y: 2)
+        )
+        .padding(.horizontal)
     }
 
     private var reviewSection: some View {
@@ -136,7 +145,6 @@ private struct ProductContent: View {
             Divider()
             Text("Reviews")
                 .font(.headline)
-
             ForEach(reviews) { rev in
                 ReviewRow(review: rev)
                     .swipeActions {
@@ -151,6 +159,7 @@ private struct ProductContent: View {
             }
         }
         .padding(.horizontal)
+        .padding(.top, 8)
     }
 }
 

@@ -9,25 +9,38 @@ struct EditProfileSheet: View {
 
     var body: some View {
         NavigationStack {
-            Form {
-                Section("New Info") {
-                    TextField("Username", text: $username)
-                    SecureField("Password", text: $password)
+            ZStack {
+                Color(.systemGroupedBackground).ignoresSafeArea()
+                VStack(spacing: 24) {
+                    Form {
+                        Section("New Info") {
+                            TextField("Username", text: $username)
+                            SecureField("Password", text: $password)
+                        }
+                    }
+                    .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+                    .padding(.horizontal, 4)
                 }
             }
             .navigationTitle("Edit Profile")
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
+                    Button {
+                        dismiss()
+                    } label: {
+                        Label("Cancel", systemImage: "xmark")
+                    }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Save") {
+                    Button {
                         Task {
                             isSaving = true
                             await onSave(username, password)
                             isSaving = false
                             dismiss()
                         }
+                    } label: {
+                        Label("Save", systemImage: "checkmark")
                     }
                     .disabled(username.isEmpty || password.isEmpty || isSaving)
                 }
