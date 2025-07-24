@@ -2,6 +2,8 @@ import SwiftUI
 
 struct ProductGridView: View {
     @StateObject private var vm = ProductGridVM()
+    @ObservedObject private var wishlist = WishlistStore.shared
+
     private let columns = [
         GridItem(.flexible()),
         GridItem(.flexible())
@@ -47,6 +49,23 @@ struct ProductGridView: View {
                     Text(err).foregroundColor(.red).padding()
                 }
             }
+            // Wishlist
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    if !wishlist.items.isEmpty {
+                        NavigationLink {
+                            WishlistView()
+                        } label: {
+                            Label(
+                                "\(wishlist.items.count)",
+                                systemImage: "heart.fill"
+                            )
+                            .foregroundStyle(.red)
+                        }
+                        .accessibilityLabel("Wishlist, \(wishlist.items.count) items")
+                    }
+                }
+            }
         }
         .onAppear {                         
             if vm.products.isEmpty {
@@ -58,6 +77,7 @@ struct ProductGridView: View {
 
 struct ProductCard: View {
     let product: Product
+    @ObservedObject private var wishlist = WishlistStore.shared
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -91,5 +111,18 @@ struct ProductCard: View {
         .background(.background)
         .cornerRadius(12)
         .shadow(radius: 2)
+        // ---------- Wishlist overlay ----------
+        .overlay(alignment: .topTrailing) {
+            let isFav = wishlist.items.contains { $0.id == product.id }
+            Button {
+                Task { await wishlist.toggle(product: product) }
+            } label: {
+                Image(systemName: isFav ? "heart.fill" : "heart")
+                    .font(.title3)
+                    .padding(6)
+                    .foregroundStyle(isFav ? .red : .secondary)
+            }
+            .buttonStyle(.plain)
+        }
     }
 }

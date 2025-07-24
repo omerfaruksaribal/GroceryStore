@@ -33,6 +33,7 @@ struct LoginView: View {
             moveToMain = newToken != nil
             if newToken != nil {
                 Task { await CartStore.shared.syncFromBackend() }
+                Task { await WishlistStore.shared.sync() }
             }
         }
         .navigationDestination(isPresented: $moveToMain) {
